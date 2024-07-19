@@ -10,4 +10,5 @@
 
 This maven plugin provides a build lifecycle for transpiling and packaging typescript code, which it does building 
 on top of the [frontend maven plugin](https://github.com/eirslett/frontend-maven-plugin). It is intended for use in 
-builds where there are java and typescript sources that produce components that need to be the same version. 
+builds where there are java and typescript sources that produce components that need to be the same version.
+
