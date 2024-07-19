@@ -1,0 +1,12 @@
+{
+  "name": "ignored-value",
+  "version": "WRONG",
+  "private": false,
+  "scripts": {
+    "compile": "tsc"
+  },
+  "dependencies": {
+    "socket.io": "4.7.4",
+    "@angular/core": "17.0.8"
+  }
+}

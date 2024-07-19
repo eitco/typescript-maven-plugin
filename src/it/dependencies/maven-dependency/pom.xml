@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <parent>
+        <groupId>de.eitco.build.essentials.test</groupId>
+        <artifactId>cmn-build-essentials-test</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>typescript-test-maven-dependency</artifactId>
+    <packaging>npm</packaging>
+
+    <properties>
+        <ts.project.name>maven-dependency</ts.project.name>
+    </properties>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>de.eitco.build.essentials.test</groupId>
+            <artifactId>typescript-test-implementation</artifactId>
+            <version>${project.version}</version>
+            <type>tgz</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>typescript-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

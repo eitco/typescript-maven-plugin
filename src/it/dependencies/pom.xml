@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>de.eitco</groupId>
+        <artifactId>eitco-parent</artifactId>
+        <version>2.0.2</version>
+    </parent>
+
+    <groupId>de.eitco.build.essentials.test</groupId>
+    <artifactId>cmn-build-essentials-test</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>implementation</module>
+        <module>maven-dependency</module>
+        <module>typescript-peer-dependency</module>
+        <module>typescript-bundled-dependency</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <configuration>
+                        <nodeVersion>v21.6.2</nodeVersion>
+                        <npmVersion>10.2.4</npmVersion>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>@project.groupId@</groupId>
+                    <artifactId>typescript-maven-plugin</artifactId>
+                    <version>@project.version@</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <projectName>@eitco/${ts.project.name}</projectName>
+                        <compileOptions>
+                            <declaration>true</declaration>
+                            <module>commonjs</module>
+                            <esModuleInterop>true</esModuleInterop>
+                            <target>es5</target>
+                            <moduleResolution>node</moduleResolution>
+                            <sourceMap>true</sourceMap>
+                            <experimentalDecorators>true</experimentalDecorators>
+                            <lib>
+                                <lib>es2017</lib>
+                                <lib>dom</lib>
+                                <lib>dom.iterable</lib>
+                            </lib>
+                        </compileOptions>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
