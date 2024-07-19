@@ -90,6 +90,9 @@
             </plugin>
             <plugin>
                 <artifactId>maven-invoker-plugin</artifactId>
+                <configuration>
+                    <streamLogsOnFailures>true</streamLogsOnFailures>
+                </configuration>
             </plugin>
         </plugins>
     </build>
