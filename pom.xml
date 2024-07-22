@@ -32,6 +32,10 @@
         <developerConnection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</developerConnection>
     </scm>
 
+    <properties>
+        <jacoco.maven.plugin.version>0.8.12</jacoco.maven.plugin.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>de.eitco.cicd</groupId>
@@ -90,6 +94,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-invoker-plugin</artifactId>
+                <version>3.7.0</version>
                 <configuration>
                     <streamLogsOnFailures>true</streamLogsOnFailures>
                 </configuration>
