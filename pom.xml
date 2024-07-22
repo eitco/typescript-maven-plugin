@@ -90,6 +90,10 @@
             <plugin>
                 <artifactId>maven-invoker-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 
