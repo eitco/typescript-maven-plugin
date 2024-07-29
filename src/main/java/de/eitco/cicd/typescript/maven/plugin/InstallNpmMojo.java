@@ -11,12 +11,21 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+/**
+ * This goal basically executes {@code npm install}.
+ */
 @Mojo(name = "npm-install", threadSafe = true, defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class InstallNpmMojo extends AbstractNpmExecutionMojo {
 
+    /**
+     * This parameter specifies whether the {@code --force} command line option is set.
+     */
     @Parameter(defaultValue = "false", property = "typescript.install.force")
     private boolean force;
 
+    /**
+     * This parameter specifies whether the {@code --legacy-peer-deps} command line option is set.
+     */
     @Parameter(defaultValue = "false", property = "typescript.install.legacyPeerDeps")
     private boolean legacyPeerDeps;
 

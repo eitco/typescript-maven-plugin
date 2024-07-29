@@ -13,6 +13,8 @@ Opposed to the frontend-maven-plugin this plugin is intended for builds that adh
 than to npm conventions. It will generate the most basic files needed for npm, like `package.json` or `ts-config.json` 
 and assumes that transpiling typescript is part of the build. 
 
+A complete reference of all goals and parameters can be found [here](https://eitco.github.io/typescript-maven-plugin/plugin-info.html)
+
 # usage 
 
 Add the typescript-maven-plugin to your build, enabling extensions:
@@ -61,7 +63,7 @@ needed in a package, omitting build specific information.
 ## generate-sources
 
 In this phase first the `install-node-and-npm` goal from the [frontend maven plugin](https://github.com/eirslett/frontend-maven-plugin) is called.
-THis will install node and npm in the configured versions. No need to install it by yourself.
+This will install node and npm in the configured versions. No need to install it by yourself.
 After that this plugins `npm-install` goal is called which basically executes `npm install` 
 
 > 📘 Maven users, note that `npm install` is not like `mvn install`. It simply installs the projects dependencies, not 
@@ -71,8 +73,8 @@ After that this plugins `npm-install` goal is called which basically executes `n
 ## compile
 
 In this phase the `compile` goal is called, which in turn calls `npm run compile` executing a script generated into the 
-file `package.json` earlier. This will compile the typescript sources, which are assumed in `src/main/ts` and 
-`target/generated-sources/main/ts`.
+file `package.json` earlier - which simply consists of a call to `tsc` the typescript compiler. This will compile the 
+typescript sources, which are assumed in `src/main/ts` and `target/generated-sources/main/ts`.
 
 
 ## package
@@ -273,5 +275,6 @@ If you are using a different npm registry that the default registry you can conf
 ```
 
 In this example the plugin will add the commandline parameter `--registry=https://my.registry.io` to every npm call. 
+
 
 

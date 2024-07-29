@@ -22,6 +22,9 @@ public abstract class AbstractNpmExecutionMojo extends AbstractTypescriptMojo {
     @Component
     private BuildContext buildContext;
 
+    /**
+     * This parameter specifies whether the command line option {@code verbose} should be given to any npm execution.
+     */
     @Parameter(defaultValue = "false", property = "typescript.verbose")
     private boolean verbose;
 

@@ -11,6 +11,9 @@ package de.eitco.cicd.typescript.maven.plugin;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
+/**
+ * This goal deploys the npm package by calling {@code npm publish}.
+ */
 @Mojo(name = "deploy", threadSafe = true, defaultPhase = LifecyclePhase.INSTALL)
 public class NpmDeployMojo extends DistributionDirectoryNpmExecutionMojo {
 

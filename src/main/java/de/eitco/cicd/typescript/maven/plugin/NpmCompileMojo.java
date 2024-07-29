@@ -11,6 +11,10 @@ package de.eitco.cicd.typescript.maven.plugin;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
+/**
+ * This goal compiles the typescript sources. It does so by calling the {@code compile} script, which in turn
+ * simply calls {@code tsc}.
+ */
 @Mojo(name = "compile", threadSafe = true, defaultPhase = LifecyclePhase.COMPILE)
 public class NpmCompileMojo extends AbstractNpmExecutionMojo {
     @Override

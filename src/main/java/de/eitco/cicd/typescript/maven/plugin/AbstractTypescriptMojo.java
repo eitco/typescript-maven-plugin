@@ -32,6 +32,7 @@ public abstract class AbstractTypescriptMojo extends AbstractFrontendMojo {
 
     public static final String PACKAGE_FILE_NAME = "package.json";
     public static final Pattern DISALLOWED_VERSION_CHARACTERS = Pattern.compile("[^A-Za-z0-9-.+]");
+
     /**
      * This parameter holds the name of a package json file that will be merged with the package configuration given by
      * the maven parameters
@@ -39,27 +40,44 @@ public abstract class AbstractTypescriptMojo extends AbstractFrontendMojo {
     @Parameter(property = "typescript.default.package.json")
     protected File defaultValues = null;
 
+    /**
+     * This parameter specifies whether the typescript plugin goals should be executed or not.
+     */
     @Parameter(defaultValue = "false", property = "ts.skip")
     private boolean skip;
 
+    /**
+     * This parameter specifies a directory where distribution package should be compiled to and be packaged from.
+     */
     @Parameter(
         defaultValue = "${project.build.directory}/dist",
         required = false
     )
     protected File distributionDirectory;
 
+    /**
+     * This parameter specifies the name of the project. This is the unique name the generated package will
+     * be referenced with.
+     */
     @Parameter(
         defaultValue = "${project.artifactId}",
         property = "typescript.project.name"
     )
     protected String projectName;
 
+    /**
+     * This parameter specifies the version of the package deployed.
+     */
     @Parameter(
         defaultValue = "${project.version}",
         property = "typescript.project.version"
     )
     protected String projectVersion;
 
+    /**
+     * This parameter specifies the npm registry to load dependencies from. If left empty the default
+     * registry (https://registry.npmjs.org/) will be used.
+     */
     @Parameter(
         property = "npmRegistryURL",
         required = false,
@@ -67,6 +85,10 @@ public abstract class AbstractTypescriptMojo extends AbstractFrontendMojo {
     )
     protected String npmRegistryURL;
 
+    /**
+     * This parameter specifies the npm registry to publish the generated package to. If left empty,
+     * the value of {@code npmRegistryURL} will be used instead.
+     */
     @Parameter(
         property = "typescript.publish.registry.url",
         required = false,
@@ -74,43 +96,86 @@ public abstract class AbstractTypescriptMojo extends AbstractFrontendMojo {
     )
     protected String publishRegistryURL;
 
+    /**
+     * This parameter specifies the name of the file implementing the entry point to the package. Omit the
+     * file suffix.
+     */
     @Parameter(
         defaultValue = "import"
     )
     protected String typescriptEntryPoint;
 
+    /**
+     * This parameter specifies a list of npm dependencies to add to the package compiled.
+     */
     @Parameter
     private List<NpmDependency> dependencies = new ArrayList<>();
 
+    /**
+     * This parameter specifies a list of npm dependencies to add to the package compiled. The difference to
+     * the parameter {@code {@link #dependencies}} is that this property is intended as a list of default
+     * dependencies specified in a common super pom, so that individual projects may add their dependencies
+     * without overwriting the default dependencies
+     */
     @Parameter
     private List<NpmDependency> defaultDependencies = new ArrayList<>();
 
     private Map<String, NpmDependency> allDependencies;
 
+    /**
+     * This parameter specifies the compile options to the typescript compiler.
+     */
     @Parameter
     protected CompilerOptions compileOptions = new CompilerOptions();
 
+    /**
+     * This parameter specifies the compile options to the typescript compiler when compiling test sources.
+     * This options will be used when generating the {@code tsconfig.spec.json}, which will always derive from
+     * {@code tsconfig.json} generated from the {@code {@link #compileOptions compile options parameter}}.
+     */
     @Parameter
     protected CompilerOptions testCompileOptions = new CompilerOptions();
 
+
+    /**
+     * This parameter specifies the {@code angularCompilerOptions} element of the generated {@code tsconfig.json} file.
+     */
     @Parameter
     protected AngularCompilerOptions angularCompilerOptions = new AngularCompilerOptions();
 
+    /**
+     * This parameter specifies the location of the typescript source files to compile.
+     */
     @Parameter
     protected List<String> sources = List.of("src/main/ts/**.ts", "target/generated-sources/main/ts/**.ts");
 
+    /**
+     * This parameter specifies the sources to exclude from compiling.
+     */
     @Parameter
     protected  List<String> sourceExcludes = List.of();
 
+    /**
+     * This parameter specifies the location of the test source files.
+     */
     @Parameter
     protected List<String> testSources = List.of("src/test/ts/**.ts", "target/generated-sources/test/ts/**.ts");
 
+    /**
+     * This parameter specifies sources to exclude from test compiling.
+     */
     @Parameter
     protected List<String> testSourceExcludes = List.of();
 
+    /**
+     * This parameter specifies the typescript version
+     */
     @Parameter(property = "typescript.version", defaultValue = "4.6.2")
     protected String typeScriptVersion;
 
+    /**
+     * This parameter specifies a set of keywords to add to the projects {@code package.json} file.
+     */
     @Parameter
     protected List<String> keywords = new ArrayList<>();
 
@@ -131,14 +196,23 @@ public abstract class AbstractTypescriptMojo extends AbstractFrontendMojo {
 
     @Component
     protected ArtifactResolver artifactResolver;
+
     /**
-     * a suffix appended to the projects' version if and only if this version ends with "-SNAPSHOT"
+     * This parameter specifies a suffix appended to the projects' version if and only if this version ends with "-SNAPSHOT"
      */
     @Parameter(property = "typescript.snapshot.version.suffix")
     private String snapshotVersionSuffix;
+
+    /**
+     * This parameter specifies additional scripts to be written to the {@code package.json}. Those scripts can be
+     * executed using the frontend-maven-plugin.
+     */
     @Parameter
     private Map<String, String> additionalScripts = new LinkedHashMap<>();
 
+    /**
+     * This parameter specifies the name of a schematic to be added to the {@code package.json}.
+     */
     @Parameter
     private String schematics = null;
 

@@ -32,6 +32,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * This goal packages the npm package by calling {@code npm pack}. Additionally, this attaches
+ * the package created, the `package.json` file and the `package-lock.json` file to the project so
+ * that the maven default install and deploy plugins will install/deploy them.
+ */
 @Mojo(name = "package", threadSafe = true, defaultPhase = LifecyclePhase.PACKAGE)
 public class NpmPackageMojo extends DistributionDirectoryNpmExecutionMojo {
 

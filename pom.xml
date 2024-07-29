@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -13,6 +14,12 @@
     <artifactId>typescript-maven-plugin</artifactId>
     <version>4.0.2-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
+
+    <description>
+        This maven plugin provides a build lifecycle for transpiling and packaging typescript code, which it does
+        building on top of the frontend maven plugin. It is intended for use in builds where there are java and
+        typescript sources that produce components that need to be the same version.
+    </description>
 
     <developers>
         <developer>
@@ -29,8 +36,8 @@
         <url>https://github.com/eitco/typescript-maven-plugin.git</url>
         <connection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</connection>
         <developerConnection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
 
     <dependencies>
@@ -75,6 +82,9 @@
         <plugins>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <goals>deploy site site:stage scm-publish:publish-scm</goals>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -94,6 +104,21 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.12.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <pubScmUrl>scm:git:https://github.com/eitco/eitco.github.io.git</pubScmUrl>
+                    <scmBranch>main</scmBranch>
+                    <subDirectory>${artifactId}</subDirectory>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -107,5 +132,23 @@
             <url>https://maven.pkg.github.com/eitco/eitco-oss-parent</url>
         </repository>
     </repositories>
+
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-report-plugin</artifactId>
+                <version>3.13.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <distributionManagement>
+        <site>
+            <id>github</id>
+            <url>scm:git:https://github.com/eitco/eitco.github.io.git</url>
+        </site>
+    </distributionManagement>
 
 </project>

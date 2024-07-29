@@ -12,6 +12,11 @@ import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolverExcepti
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * This goal compares the build configuration specified by the current project object model and compares it to the
+ * current {@code package.json} - any difference is written to the json file specified by {@code defaultValues} so that
+ * any other execution of different goals of the typescript-maven-plugin will honour those differences.
+ */
 @Mojo(name = "diff-package", threadSafe = true, defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class DiffPackageMojo extends AbstractTypescriptMojo {
 

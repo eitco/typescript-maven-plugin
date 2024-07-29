@@ -20,6 +20,12 @@ import java.io.File;
 import java.io.IOException;
 
 
+/**
+ * This goal generates the files `package.json`, `ts-config.json`
+ * and `tsconfig.spec.json` from its configuration. It also generates a second `package.json` file inside the distribution
+ * directory. The second file will be the one distributed with the package. It contains only the basic project information
+ * needed in a package, omitting build specific information.
+ */
 @Mojo(name = "generate-project", threadSafe = true, defaultPhase = LifecyclePhase.INITIALIZE)
 public class GenerateNpmProjectMojo extends AbstractTypescriptMojo {
 
