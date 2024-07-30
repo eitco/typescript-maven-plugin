@@ -32,12 +32,9 @@
     </developers>
 
     <scm>
-        <url>git@github.com:eitco/typescript-maven-plugin.git</url>
-        <connection>scm:git:git@github.com:eitco/typescript-maven-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:eitco/typescript-maven-plugin.git</developerConnection>
-<!--        <url>https://github.com/eitco/typescript-maven-plugin.git</url>-->
-<!--        <connection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</connection>-->
-<!--        <developerConnection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</developerConnection>-->
+        <url>https://github.com/eitco/typescript-maven-plugin.git</url>
+        <connection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</connection>
+        <developerConnection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -127,7 +124,7 @@
                 <artifactId>maven-scm-publish-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <pubScmUrl>scm:git:https://github.com/eitco/eitco.github.io.git</pubScmUrl>
+                    <pubScmUrl>scm:git:git@github.com:eitco/eitco.github.io.git</pubScmUrl>
                     <scmBranch>main</scmBranch>
                     <subDirectory>${artifactId}</subDirectory>
                     <serverId>github</serverId>
