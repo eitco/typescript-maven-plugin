@@ -116,6 +116,7 @@
                     <pubScmUrl>scm:git:https://github.com/eitco/eitco.github.io.git</pubScmUrl>
                     <scmBranch>main</scmBranch>
                     <subDirectory>${artifactId}</subDirectory>
+                    <serverId>github</serverId>
                 </configuration>
             </plugin>
         </plugins>
