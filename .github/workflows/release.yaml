@@ -7,13 +7,11 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY_EITCO_GITHUB }}
-      - uses: eitco/maven-release@main
+      - uses: eitco/maven-release@0.0.2
         with:
           gpg-private-key: ${{ secrets.ARTIFACT_SIGNING_GPG_PRIVATE_KEY }}
           gpg-key-name: ${{ secrets.ARTIFACT_SIGNING_GPG_KEY_NAME }}
           gpg-passphrase: ${{ secrets.ARTIFACT_SIGNING_GPG_PRIVATE_KEY_PASSWORD }}
           deploy-user: ${{ secrets.OSSRH_JIRA_USERNAME }}
           deploy-password: ${{ secrets.OSSRH_JIRA_PASSWORD }}
+          git-ssh-private-key: ${{ secrets.SSH_KEY_EITCO_GITHUB }}

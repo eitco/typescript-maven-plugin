@@ -5,7 +5,7 @@
     <parent>
         <groupId>de.eitco.cicd</groupId>
         <artifactId>eitco-oss-parent</artifactId>
-        <version>0.0.14</version>
+        <version>0.0.15</version>
     </parent>
 
 
@@ -117,17 +117,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.12.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-publish-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <pubScmUrl>scm:git:git@github.com:eitco/eitco.github.io.git</pubScmUrl>
-                    <scmBranch>main</scmBranch>
-                    <subDirectory>${artifactId}</subDirectory>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -149,7 +142,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-report-plugin</artifactId>
-                <version>3.13.1</version>
             </plugin>
         </plugins>
     </reporting>
