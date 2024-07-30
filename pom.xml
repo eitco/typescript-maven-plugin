@@ -11,7 +11,7 @@
 
     <groupId>de.eitco.cicd</groupId>
     <artifactId>typescript-maven-plugin</artifactId>
-    <version>4.0.9</version>
+    <version>4.0.10-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <description>
@@ -35,7 +35,7 @@
         <url>https://github.com/eitco/typescript-maven-plugin.git</url>
         <connection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</connection>
         <developerConnection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</developerConnection>
-        <tag>4.0.9</tag>
+        <tag>HEAD</tag>
     </scm>
 
 
