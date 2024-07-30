@@ -12,7 +12,7 @@
 
     <groupId>de.eitco.cicd</groupId>
     <artifactId>typescript-maven-plugin</artifactId>
-    <version>4.0.3-SNAPSHOT</version>
+    <version>4.0.4-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <description>
