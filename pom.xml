@@ -32,9 +32,12 @@
     </developers>
 
     <scm>
-        <url>https://github.com/eitco/typescript-maven-plugin.git</url>
-        <connection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</connection>
-        <developerConnection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</developerConnection>
+        <url>git@github.com:eitco/typescript-maven-plugin.git</url>
+        <connection>scm:git:git@github.com:eitco/typescript-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:eitco/typescript-maven-plugin.git</developerConnection>
+<!--        <url>https://github.com/eitco/typescript-maven-plugin.git</url>-->
+<!--        <connection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</connection>-->
+<!--        <developerConnection>scm:git:https://github.com/eitco/typescript-maven-plugin.git</developerConnection>-->
         <tag>HEAD</tag>
     </scm>
 
