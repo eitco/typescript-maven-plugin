@@ -100,7 +100,7 @@ configured maven remote repository.
 # specifying dependencies
 
 npm package dependencies can be specified in two ways: As npm dependencies or as maven dependencies. 
-Further examples how the specific types of dependencies behave are located in the [integration tests](tree/main/src/it/dependencies) 
+Further examples how the specific types of dependencies behave are located in the [integration tests](./src/it/dependencies) 
 
 ## npm dependencies
 
