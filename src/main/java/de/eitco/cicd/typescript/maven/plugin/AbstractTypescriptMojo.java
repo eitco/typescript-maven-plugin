@@ -310,7 +310,7 @@ public abstract class AbstractTypescriptMojo extends AbstractFrontendMojo {
 
         metaDataReader.forEachDependency((dependency, packaj) -> {
 
-            String version = '~' + packaj.getVersion();
+            String version = '^' + packaj.getVersion();
 
             projectBuilder.addPeerDependency(
                     packaj.getName(),
