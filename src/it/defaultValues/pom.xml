@@ -30,6 +30,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <defaultValues>default.package.json</defaultValues>
+                    <typeScriptVersion>5.7.3</typeScriptVersion>
                     <dependencies>
                         <dependency>
                             <name>@angular/core</name>
