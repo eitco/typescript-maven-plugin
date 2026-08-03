@@ -120,27 +120,22 @@ public class NpmProjectBuilder {
 
     public Package makeBuildPackage() {
 
-        return mergeDefaultValues(new Package(
-                name,
-                version,
-                mavenProject.getDescription(),
-                keywords,
-                mavenProject.getUrl(),
-                convertLicenses(),
-                getAuthor(),
-                getContributors(),
-                false,
-                null,
-                null,
-                null,
-                scripts,
-                dependencies,
-                devDependencies,
-                null,
-                null,
-                bundledDependencies,
-                schematics
-        ));
+        return mergeDefaultValues(new Package()
+                .setName(name)
+                .setVersion(version)
+                .setDescription(mavenProject.getDescription())
+                .setKeywords(keywords)
+                .setHomepage(mavenProject.getUrl())
+                .setLicense(convertLicenses())
+                .setAuthor(getAuthor())
+                .setContributors(getContributors())
+                .setPrivate(false)
+                .setScripts(scripts)
+                .setDependencies(dependencies)
+                .setDevDependencies(devDependencies)
+                .setBundledDependencies(bundledDependencies)
+                .setSchematics(schematics)
+        );
     }
 
     private Package mergeDefaultValues(Package result) {
@@ -206,26 +201,23 @@ public class NpmProjectBuilder {
 
     public Package makeDeployPackage() {
 
-        return mergeDefaultValues(new Package(
-                name,
-                version,
-                mavenProject.getDescription(),
-                keywords,
-                mavenProject.getUrl(),
-                convertLicenses(),
-                getAuthor(),
-                getContributors(),
-                false,
-                types,
-                main,
-                files,
-                null,
-                null,
-                null,
-                peerDependencies,
-                (registry != null) ? Map.of("registry", registry) : null,
-                bundledDependencies,
-                schematics));
+        return mergeDefaultValues(new Package()
+                .setName(name)
+                .setVersion(version)
+                .setDescription(mavenProject.getDescription())
+                .setKeywords(keywords)
+                .setHomepage(mavenProject.getUrl())
+                .setLicense(convertLicenses())
+                .setAuthor(getAuthor())
+                .setContributors(getContributors())
+                .setPrivate(false)
+                .setTypes(types)
+                .setMain(main)
+                .setFiles(files)
+                .setPeerDependencies(peerDependencies)
+                .setPublishConfig((registry != null) ? Map.of("registry", registry) : null)
+                .setBundledDependencies(bundledDependencies)
+                .setSchematics(schematics));
     }
 
     public NpmProjectBuilder addScript(String name, String content) {

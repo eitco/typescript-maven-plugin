@@ -2,6 +2,17 @@
   "name": "ignored-value",
   "version": "WRONG",
   "private": false,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eitco/example.git"
+  },
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "compile": "tsc"
   },

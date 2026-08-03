@@ -7,6 +7,7 @@
  */
 package de.eitco.cicd.typescript.maven.plugin;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
@@ -55,6 +56,7 @@ public class NpmDependencyMetaDataReader extends JsonDependencyMetaDataReader<Pa
 
         result.registerModule(new ParameterNamesModule());
         result.enable(SerializationFeature.INDENT_OUTPUT);
+        result.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
         return result;
     }
