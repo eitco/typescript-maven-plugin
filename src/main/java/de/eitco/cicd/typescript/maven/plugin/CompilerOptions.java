@@ -7,13 +7,20 @@
  */
 package de.eitco.cicd.typescript.maven.plugin;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CompilerOptions {
+
+    // parses additionalOptions string values into their proper JSON type (boolean, number, array, ...)
+    private static final ObjectMapper VALUE_PARSER = new ObjectMapper();
 
     private Boolean allowUnreachableCode;
     private Boolean allowUnusedLabels;
@@ -130,6 +137,9 @@ public class CompilerOptions {
     private Boolean assumeChangesOnlyAffectDirectDependencies;
     private String charset;
     private String out;
+
+    // --- forward compatibility: arbitrary (also future) options written verbatim into tsconfig ---
+    private Map<String, String> additionalOptions;
 
     public Boolean getAllowUnreachableCode() {
         return allowUnreachableCode;
@@ -1163,5 +1173,54 @@ public class CompilerOptions {
     public CompilerOptions setOut(String out) {
         this.out = out;
         return this;
+    }
+
+    @JsonIgnore
+    public Map<String, String> getAdditionalOptions() {
+        return additionalOptions;
+    }
+
+    /**
+     * Arbitrary compiler options written verbatim into the generated {@code tsconfig.json}. Use this
+     * as a forward-compatibility escape hatch for options not (yet) modelled by this class; do not
+     * use it for options that already have a dedicated field, otherwise the key would be emitted
+     * twice. String values are parsed into their proper JSON type on serialization
+     * ({@code "true"} → boolean, {@code "42"} → number, {@code "[\"es2020\"]"} → array).
+     */
+    public CompilerOptions setAdditionalOptions(Map<String, String> additionalOptions) {
+        this.additionalOptions = additionalOptions;
+        return this;
+    }
+
+    @JsonAnyGetter
+    Map<String, Object> serializeAdditionalOptions() {
+
+        if (additionalOptions == null) {
+
+            return null;
+        }
+
+        Map<String, Object> result = new LinkedHashMap<>();
+
+        additionalOptions.forEach((key, value) -> result.put(key, parseValue(value)));
+
+        return result;
+    }
+
+    private static Object parseValue(String value) {
+
+        if (value == null) {
+
+            return null;
+        }
+
+        try {
+
+            return VALUE_PARSER.readTree(value);
+
+        } catch (Exception e) {
+
+            return value;
+        }
     }
 }

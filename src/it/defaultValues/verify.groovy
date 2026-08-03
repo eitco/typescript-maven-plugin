@@ -26,3 +26,6 @@ assert packageJson.contains("\"type\" : \"module\"") : packageJson
 assert packageJson.contains("\"node\" : \">=18\"") : packageJson
 assert packageJson.contains("https://github.com/eitco/example.git") : packageJson
 assert packageJson.contains("\"exports\"") : packageJson
+
+// unknown/unmodelled properties from defaultValues must be carried into the generated package.json
+assert packageJson.contains("\"customField\" : \"customValue\"") : packageJson

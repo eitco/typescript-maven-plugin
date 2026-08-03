@@ -223,4 +223,43 @@ class PackageTest {
         assertEquals(Map.of("node", ">=18"), diff.getEngines());
         assertEquals(Map.of("fsevents", "2.3.3"), diff.getOptionalDependencies());
     }
+
+    @Test
+    void capturesAndRoundTripsUnknownProperties() throws Exception {
+
+        // a property not modelled by the class must be preserved instead of dropped.
+        Package p = mapper.readValue("""
+                {
+                  "name": "x",
+                  "version": "1.0.0",
+                  "corporateMeta": { "team": "platform" },
+                  "futureFlag": true
+                }
+                """, Package.class);
+
+        assertNotNull(p.getAdditionalProperties());
+        assertEquals("platform", p.getAdditionalProperties().get("corporateMeta").get("team").asText());
+        assertTrue(p.getAdditionalProperties().get("futureFlag").asBoolean());
+
+        // re-serialize: unknown properties appear flattened at top level, type-faithful.
+        JsonNode reparsed = mapper.readTree(mapper.writeValueAsString(p));
+        assertEquals("platform", reparsed.get("corporateMeta").get("team").asText());
+        assertTrue(reparsed.get("futureFlag").asBoolean());
+        assertFalse(reparsed.has("additionalProperties"));
+    }
+
+    @Test
+    void mergeCarriesUnknownFromDefaultValues() throws Exception {
+
+        Package primary = new Package().setName("x").setVersion("1.0.0");
+
+        Package secondary = mapper.readValue("""
+                { "corporateMeta": { "team": "platform" } }
+                """, Package.class);
+
+        Package merged = primary.merge(secondary);
+
+        assertNotNull(merged.getAdditionalProperties());
+        assertEquals("platform", merged.getAdditionalProperties().get("corporateMeta").get("team").asText());
+    }
 }

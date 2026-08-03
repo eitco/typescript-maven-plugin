@@ -8,7 +8,8 @@
 package de.eitco.cicd.typescript.maven.plugin;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,11 +27,13 @@ import java.util.Map;
  * Represents a npm {@code package.json}. The class models all top-level fields of the current npm
  * version (v12, see reference below) while staying backwards compatible: a valid v8 {@code package.json}
  * is still recognized. Fields that npm allows in several shapes (string-or-object, string-or-array, ...)
- * are kept as raw {@link JsonNode} so any valid form round-trips without loss; unknown fields are ignored.
+ * are kept as raw {@link JsonNode} so any valid form round-trips without loss. Properties not
+ * modelled explicitly are captured into {@link #additionalProperties} (via {@link JsonAnySetter})
+ * and written back out flattened (via {@link JsonAnyGetter}), so unknown / future fields survive a
+ * read-merge-write round trip instead of being dropped.
  *
  * @see <a href="https://docs.npmjs.com/cli/v12/configuring-npm/package-json">package.json reference</a>
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Package {
 
@@ -97,6 +100,9 @@ public class Package {
 
     // --- angular specific extension (not part of the npm spec) ---
     private String schematics;
+
+    // --- forward compatibility: any property not modelled above is captured here ---
+    private Map<String, JsonNode> additionalProperties;
 
     public String getName() {
         return name;
@@ -487,6 +493,27 @@ public class Package {
         return this;
     }
 
+    @JsonAnyGetter
+    public Map<String, JsonNode> getAdditionalProperties() {
+        return additionalProperties;
+    }
+
+    public Package setAdditionalProperties(Map<String, JsonNode> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+        return this;
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String key, JsonNode value) {
+
+        if (additionalProperties == null) {
+
+            additionalProperties = new LinkedHashMap<>();
+        }
+
+        additionalProperties.put(key, value);
+    }
+
     /**
      * Merges this package (primary) with the given secondary package. For every field the primary
      * (non-null) value wins; collections and maps are combined, with the primary entries taking
@@ -544,7 +571,8 @@ public class Package {
                 .setSideEffects(merge(sideEffects, secondary.sideEffects))
                 .setWorkspaces(merge(workspaces, secondary.workspaces))
                 .setPublishConfig(mergeMap(publishConfig, secondary.publishConfig))
-                .setSchematics(merge(schematics, secondary.schematics));
+                .setSchematics(merge(schematics, secondary.schematics))
+                .setAdditionalProperties(mergeMap(additionalProperties, secondary.additionalProperties));
     }
 
     @Nullable
@@ -639,7 +667,8 @@ public class Package {
                 .setSideEffects(expectedPackage.sideEffects)
                 .setWorkspaces(expectedPackage.workspaces)
                 .setPublishConfig(minus(publishConfig, expectedPackage.publishConfig))
-                .setSchematics(expectedPackage.schematics);
+                .setSchematics(expectedPackage.schematics)
+                .setAdditionalProperties(minus(additionalProperties, expectedPackage.additionalProperties));
     }
 
     @NotNull
