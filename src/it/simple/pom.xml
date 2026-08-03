@@ -29,9 +29,11 @@
                 <version>@project.version@</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <typeScriptVersion>5.7.3</typeScriptVersion>
                     <compileOptions>
                         <declaration>true</declaration>
                         <module>commonjs</module>
+                        <noUncheckedSideEffectImports>true</noUncheckedSideEffectImports>
                         <esModuleInterop>true</esModuleInterop>
                         <target>es5</target>
                         <moduleResolution>node</moduleResolution>

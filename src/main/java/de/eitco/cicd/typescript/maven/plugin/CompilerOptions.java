@@ -30,11 +30,20 @@ public class CompilerOptions {
     private Boolean noUnusedParameters;
     private Boolean strict;
     private Boolean strictBindCallApply;
+    private Boolean strictBuiltinIteratorReturn;
     private Boolean strictFunctionTypes;
     private Boolean strictNullChecks;
     private Boolean strictPropertyInitialization;
     private Boolean useUnknownInCatchVariables;
     private Boolean allowUmdGlobalAccess;
+    private Boolean allowArbitraryExtensions;
+    private Boolean allowImportingTsExtensions;
+    private List<String> customConditions;
+    private List<String> moduleSuffixes;
+    private Boolean noUncheckedSideEffectImports;
+    private Boolean resolvePackageJsonExports;
+    private Boolean resolvePackageJsonImports;
+    private Boolean rewriteRelativeImportExtensions;
     private String baseUrl;
     private String module;
     private String moduleResolution;
@@ -76,6 +85,9 @@ public class CompilerOptions {
     private Boolean esModuleInterop;
     private Boolean forceConsistentCasingInFileNames;
     private Boolean isolatedModules;
+    private Boolean isolatedDeclarations;
+    private Boolean verbatimModuleSyntax;
+    private Boolean erasableSyntaxOnly;
     private Boolean preserveSymlinks;
     private Boolean keyofStringsOnly;
     private Boolean noImplicitUseStrict;
@@ -93,12 +105,17 @@ public class CompilerOptions {
     private String reactNamespace;
     private String target;
     private Boolean useDefineForClassFields;
+    private String moduleDetection;
+    private Boolean libReplacement;
     private Boolean diagnostics;
     private Boolean explainFiles;
     private Boolean extendedDiagnostics;
     private Boolean listEmittedFiles;
     private Boolean listFiles;
     private Boolean traceResolution;
+    private Boolean noCheck;
+    private String generateCpuProfile;
+    private String generateTrace;
     private Boolean composite;
     private Boolean disableReferencedProjectLoad;
     private Boolean disableSolutionSearching;
@@ -110,6 +127,9 @@ public class CompilerOptions {
     private Boolean pretty;
     private Boolean skipDefaultLibCheck;
     private Boolean skipLibCheck;
+    private Boolean assumeChangesOnlyAffectDirectDependencies;
+    private String charset;
+    private String out;
 
     public Boolean getAllowUnreachableCode() {
         return allowUnreachableCode;
@@ -962,6 +982,186 @@ public class CompilerOptions {
 
     public CompilerOptions setSkipLibCheck(Boolean skipLibCheck) {
         this.skipLibCheck = skipLibCheck;
+        return this;
+    }
+
+    public Boolean getStrictBuiltinIteratorReturn() {
+        return strictBuiltinIteratorReturn;
+    }
+
+    public CompilerOptions setStrictBuiltinIteratorReturn(Boolean strictBuiltinIteratorReturn) {
+        this.strictBuiltinIteratorReturn = strictBuiltinIteratorReturn;
+        return this;
+    }
+
+    public Boolean getAllowArbitraryExtensions() {
+        return allowArbitraryExtensions;
+    }
+
+    public CompilerOptions setAllowArbitraryExtensions(Boolean allowArbitraryExtensions) {
+        this.allowArbitraryExtensions = allowArbitraryExtensions;
+        return this;
+    }
+
+    public Boolean getAllowImportingTsExtensions() {
+        return allowImportingTsExtensions;
+    }
+
+    public CompilerOptions setAllowImportingTsExtensions(Boolean allowImportingTsExtensions) {
+        this.allowImportingTsExtensions = allowImportingTsExtensions;
+        return this;
+    }
+
+    public List<String> getCustomConditions() {
+        return customConditions;
+    }
+
+    public CompilerOptions setCustomConditions(List<String> customConditions) {
+        this.customConditions = customConditions;
+        return this;
+    }
+
+    public List<String> getModuleSuffixes() {
+        return moduleSuffixes;
+    }
+
+    public CompilerOptions setModuleSuffixes(List<String> moduleSuffixes) {
+        this.moduleSuffixes = moduleSuffixes;
+        return this;
+    }
+
+    public Boolean getNoUncheckedSideEffectImports() {
+        return noUncheckedSideEffectImports;
+    }
+
+    public CompilerOptions setNoUncheckedSideEffectImports(Boolean noUncheckedSideEffectImports) {
+        this.noUncheckedSideEffectImports = noUncheckedSideEffectImports;
+        return this;
+    }
+
+    public Boolean getResolvePackageJsonExports() {
+        return resolvePackageJsonExports;
+    }
+
+    public CompilerOptions setResolvePackageJsonExports(Boolean resolvePackageJsonExports) {
+        this.resolvePackageJsonExports = resolvePackageJsonExports;
+        return this;
+    }
+
+    public Boolean getResolvePackageJsonImports() {
+        return resolvePackageJsonImports;
+    }
+
+    public CompilerOptions setResolvePackageJsonImports(Boolean resolvePackageJsonImports) {
+        this.resolvePackageJsonImports = resolvePackageJsonImports;
+        return this;
+    }
+
+    public Boolean getRewriteRelativeImportExtensions() {
+        return rewriteRelativeImportExtensions;
+    }
+
+    public CompilerOptions setRewriteRelativeImportExtensions(Boolean rewriteRelativeImportExtensions) {
+        this.rewriteRelativeImportExtensions = rewriteRelativeImportExtensions;
+        return this;
+    }
+
+    public String getModuleDetection() {
+        return moduleDetection;
+    }
+
+    public CompilerOptions setModuleDetection(String moduleDetection) {
+        this.moduleDetection = moduleDetection;
+        return this;
+    }
+
+    public Boolean getLibReplacement() {
+        return libReplacement;
+    }
+
+    public CompilerOptions setLibReplacement(Boolean libReplacement) {
+        this.libReplacement = libReplacement;
+        return this;
+    }
+
+    public Boolean getIsolatedDeclarations() {
+        return isolatedDeclarations;
+    }
+
+    public CompilerOptions setIsolatedDeclarations(Boolean isolatedDeclarations) {
+        this.isolatedDeclarations = isolatedDeclarations;
+        return this;
+    }
+
+    public Boolean getVerbatimModuleSyntax() {
+        return verbatimModuleSyntax;
+    }
+
+    public CompilerOptions setVerbatimModuleSyntax(Boolean verbatimModuleSyntax) {
+        this.verbatimModuleSyntax = verbatimModuleSyntax;
+        return this;
+    }
+
+    public Boolean getErasableSyntaxOnly() {
+        return erasableSyntaxOnly;
+    }
+
+    public CompilerOptions setErasableSyntaxOnly(Boolean erasableSyntaxOnly) {
+        this.erasableSyntaxOnly = erasableSyntaxOnly;
+        return this;
+    }
+
+    public Boolean getNoCheck() {
+        return noCheck;
+    }
+
+    public CompilerOptions setNoCheck(Boolean noCheck) {
+        this.noCheck = noCheck;
+        return this;
+    }
+
+    public String getGenerateCpuProfile() {
+        return generateCpuProfile;
+    }
+
+    public CompilerOptions setGenerateCpuProfile(String generateCpuProfile) {
+        this.generateCpuProfile = generateCpuProfile;
+        return this;
+    }
+
+    public String getGenerateTrace() {
+        return generateTrace;
+    }
+
+    public CompilerOptions setGenerateTrace(String generateTrace) {
+        this.generateTrace = generateTrace;
+        return this;
+    }
+
+    public Boolean getAssumeChangesOnlyAffectDirectDependencies() {
+        return assumeChangesOnlyAffectDirectDependencies;
+    }
+
+    public CompilerOptions setAssumeChangesOnlyAffectDirectDependencies(Boolean assumeChangesOnlyAffectDirectDependencies) {
+        this.assumeChangesOnlyAffectDirectDependencies = assumeChangesOnlyAffectDirectDependencies;
+        return this;
+    }
+
+    public String getCharset() {
+        return charset;
+    }
+
+    public CompilerOptions setCharset(String charset) {
+        this.charset = charset;
+        return this;
+    }
+
+    public String getOut() {
+        return out;
+    }
+
+    public CompilerOptions setOut(String out) {
+        this.out = out;
         return this;
     }
 }
