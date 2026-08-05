@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,7 +56,8 @@ public class CompilerOptions {
     private String module;
     private String moduleResolution;
     private Boolean noResolve;
-    private Map<String, PathList> paths;
+    @JsonSerialize(converter = PathMapping.ToMapConverter.class)
+    private List<PathMapping> paths;
     private Boolean resolveJsonModule;
     private String rootDir;
     private List<String> rootDirs;
@@ -357,12 +359,13 @@ public class CompilerOptions {
         return this;
     }
 
-    public Map<String, PathList> getPaths() {
+    public List<PathMapping> getPaths() {
         return paths;
     }
 
-    public void setPaths(Map<String, PathList> paths) {
+    public CompilerOptions setPaths(List<PathMapping> paths) {
         this.paths = paths;
+        return this;
     }
 
     public Boolean getResolveJsonModule() {

@@ -49,6 +49,33 @@ class CompilerOptionsTest {
     }
 
     @Test
+    void serializesPathsAsObject() throws Exception {
+
+        CompilerOptions options = new CompilerOptions()
+                .setPaths(List.of(
+                        new PathMapping("@app/*", List.of("src/app/*")),
+                        new PathMapping("*", List.of("node_modules/*", "types/*"))
+                ));
+
+        JsonNode json = mapper.readTree(mapper.writeValueAsString(options));
+
+        JsonNode paths = json.get("paths");
+        assertTrue(paths.isObject());
+        assertTrue(paths.get("@app/*").isArray());
+        assertEquals("src/app/*", paths.get("@app/*").get(0).asText());
+        assertEquals("node_modules/*", paths.get("*").get(0).asText());
+        assertEquals("types/*", paths.get("*").get(1).asText());
+    }
+
+    @Test
+    void omitsEmptyPaths() throws Exception {
+
+        JsonNode json = mapper.readTree(mapper.writeValueAsString(new CompilerOptions()));
+
+        assertFalse(json.has("paths"));
+    }
+
+    @Test
     void additionalOptionsAreFlattenedAndTyped() throws Exception {
 
         LinkedHashMap<String, String> extra = new LinkedHashMap<>();
