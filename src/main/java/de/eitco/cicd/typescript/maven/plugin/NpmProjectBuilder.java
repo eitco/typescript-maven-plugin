@@ -23,6 +23,7 @@ public class NpmProjectBuilder {
     public static final String EXTENSION_JAVASCRIPT = ".js";
     private final String name;
     private final String version;
+    private final String tag;
     private String types;
     private String main;
     private List<String> files = List.of("**");
@@ -36,9 +37,10 @@ public class NpmProjectBuilder {
     private String schematics;
 
 
-    private NpmProjectBuilder(String name, String version) {
+    private NpmProjectBuilder(String name, String version, String tag) {
         this.name = name;
         this.version = version;
+        this.tag = tag;
     }
 
     private Map<String, String> dependencies = new LinkedHashMap<>();
@@ -46,8 +48,8 @@ public class NpmProjectBuilder {
     private Map<String, String> peerDependencies = new LinkedHashMap<>();
     private List<String> bundledDependencies = new ArrayList<>();
 
-    public static NpmProjectBuilder identifiedBy(String name, String version) {
-        return new NpmProjectBuilder(name, version);
+    public static NpmProjectBuilder identifiedBy(String name, String version, String tag) {
+        return new NpmProjectBuilder(name, version, tag);
     }
 
     public NpmProjectBuilder withDefaultValues(@NotNull Package defaultValues) {
@@ -201,6 +203,13 @@ public class NpmProjectBuilder {
 
     public Package makeDeployPackage() {
 
+        Map<String, String> publishConfig = Map.of("tag", tag);
+
+        if (registry != null) {
+
+            publishConfig.put("registry", registry);
+        }
+
         return mergeDefaultValues(new Package()
                 .setName(name)
                 .setVersion(version)
@@ -215,7 +224,7 @@ public class NpmProjectBuilder {
                 .setMain(main)
                 .setFiles(files)
                 .setPeerDependencies(peerDependencies)
-                .setPublishConfig((registry != null) ? Map.of("registry", registry) : null)
+                .setPublishConfig(publishConfig)
                 .setBundledDependencies(bundledDependencies)
                 .setSchematics(schematics));
     }

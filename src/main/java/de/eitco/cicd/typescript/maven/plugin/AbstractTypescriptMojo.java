@@ -216,6 +216,12 @@ public abstract class AbstractTypescriptMojo extends AbstractFrontendMojo {
     @Parameter
     private String schematics = null;
 
+    /**
+     * This parameter specifies the tag to be used for publishing the package.
+     */
+    @Parameter(property = "typescript.tag", defaultValue = "latest")
+    private String tag;
+
     @Override
     protected boolean skipExecution() {
         return skip;
@@ -273,7 +279,7 @@ public abstract class AbstractTypescriptMojo extends AbstractFrontendMojo {
 
         String projectVersion = makeProjectVersion();
 
-        NpmProjectBuilder projectBuilder = NpmProjectBuilder.identifiedBy(projectName, projectVersion);
+        NpmProjectBuilder projectBuilder = NpmProjectBuilder.identifiedBy(projectName, projectVersion, tag);
 
         projectBuilder.fromProject(project);
 
