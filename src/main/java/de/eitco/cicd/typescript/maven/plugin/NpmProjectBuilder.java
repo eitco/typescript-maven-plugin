@@ -203,7 +203,9 @@ public class NpmProjectBuilder {
 
     public Package makeDeployPackage() {
 
-        Map<String, String> publishConfig = Map.of("tag", tag);
+        Map<String, String> publishConfig = new LinkedHashMap<>();
+
+        publishConfig.put("tag", tag);
 
         if (registry != null) {
 
