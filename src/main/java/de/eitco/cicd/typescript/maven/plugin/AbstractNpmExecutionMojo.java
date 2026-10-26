@@ -15,7 +15,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractNpmExecutionMojo extends AbstractTypescriptMojo {
 
@@ -43,10 +45,32 @@ public abstract class AbstractNpmExecutionMojo extends AbstractTypescriptMojo {
                 argumentsToUse+= " --verbose ";
             }
             factory.getNpmRunner(new ProxyConfig(List.of()), getNpmRegistryURL()).execute(
-                    argumentsToUse, environmentVariables);
+                    argumentsToUse, makeEnvironment());
         } else {
             getLog().info("Skipping npm install as package.json unchanged");
         }
+    }
+
+    private Map<String, String> makeEnvironment() {
+
+        Map<String, String> result = new HashMap<>();
+
+        if (environmentVariables != null) {
+
+            result.putAll(environmentVariables);
+        }
+
+        result.putAll(getAdditionalEnvironment());
+
+        return result;
+    }
+
+    /**
+     * Specifies environment variables to be added to the npm execution, in addition to the parameter
+     * {@code environmentVariables}. These variables will not be logged.
+     */
+    protected Map<String, String> getAdditionalEnvironment() {
+        return Map.of();
     }
 
     protected String getNpmRegistryURL() {

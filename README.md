@@ -97,6 +97,38 @@ package built to the configured npm registry. After that mavens default `deploy`
 deploying the package created, the `package.json` file and the `package-lock.json` file to the 
 configured maven remote repository.
 
+### authentication
+
+By default `npm publish` uses npm's own authentication (e.g. an `.npmrc` file). Alternatively, the
+credentials can be taken from a server in the maven `settings.xml` - encrypted passwords are supported:
+
+```xml
+<servers>
+    <!-- basic authentication, e.g. for nexus or artifactory -->
+    <server>
+        <id>npm-private</id>
+        <username>deployer</username>
+        <password>{encrypted-password}</password>
+    </server>
+    <!-- token authentication, e.g. for npmjs.org -->
+    <server>
+        <id>npmjs</id>
+        <password>npm_token</password>
+    </server>
+</servers>
+```
+
+```xml
+<configuration>
+    <publishRegistryURL>https://nexus.example.com/repository/npm-private/</publishRegistryURL>
+    <publishServerId>npm-private</publishServerId>
+</configuration>
+```
+
+If the server specifies a username, basic authentication is used, otherwise its password is used as 
+auth token. The credentials are handed to npm as environment variables (registry scoped `npm_config_` 
+variables) and are never written to an `.npmrc` file. This requires npm 7 or later.
+
 # specifying dependencies
 
 npm package dependencies can be specified in two ways: As npm dependencies or as maven dependencies. 
