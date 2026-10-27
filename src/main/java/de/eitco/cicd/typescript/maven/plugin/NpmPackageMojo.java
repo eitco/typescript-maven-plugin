@@ -8,6 +8,7 @@
 package de.eitco.cicd.typescript.maven.plugin;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.eirslett.maven.plugins.frontend.lib.FrontendException;
 import com.github.eirslett.maven.plugins.frontend.lib.FrontendPluginFactory;
 import com.github.eirslett.maven.plugins.frontend.mojo.RepositoryCacheResolver;
@@ -20,17 +21,15 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.shared.utils.io.FileUtils;
 import org.eclipse.aether.RepositorySystemSession;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This goal packages the npm package by calling {@code npm pack}. Additionally, this attaches
@@ -39,8 +38,6 @@ import java.util.stream.Stream;
  */
 @Mojo(name = "package", threadSafe = true, defaultPhase = LifecyclePhase.PACKAGE)
 public class NpmPackageMojo extends DistributionDirectoryNpmExecutionMojo {
-
-    public static final String MODULES_SUB_DIRECTORY = "node_modules";
 
     @Component
     private MavenProjectHelper projectHelper;
@@ -53,26 +50,9 @@ public class NpmPackageMojo extends DistributionDirectoryNpmExecutionMojo {
     public void execute() throws MojoFailureException {
 
         try {
-            File moduleDirectory = new File(workingDirectory, MODULES_SUB_DIRECTORY);
+            if (!skipExecution()) {
 
-            if (moduleDirectory.isDirectory()) {
-
-                final Path targetDirectory = Path.of(distributionDirectory.getAbsolutePath(), MODULES_SUB_DIRECTORY);
-
-                try {
-
-                    Files.createLink(targetDirectory, moduleDirectory.toPath());
-
-                } catch (IOException e) {
-
-                    final List<NpmDependency> bundledDependencies = allDependencies()
-                            .filter(it -> it.getType() == DependencyType.BUNDLED).collect(Collectors.toList());
-
-                    for (NpmDependency bundledDependency : bundledDependencies) {
-
-                        FileUtils.copyDirectoryStructure(new File(moduleDirectory, bundledDependency.getName()), new File(targetDirectory.toFile(), bundledDependency.getName()));
-                    }
-                }
+                bundleDependencies();
             }
 
             super.execute();
@@ -85,17 +65,52 @@ public class NpmPackageMojo extends DistributionDirectoryNpmExecutionMojo {
 
             projectHelper.attachArtifact(project, "package", new File(distributionDirectory, "package.json"));
 
-            final File packageLock = new File(project.getBasedir(), "package-lock.json");
+            final File packageLock = new File(project.getBasedir(), packageManager.lockFileName());
 
             if (packageLock.isFile()) {
 
-                projectHelper.attachArtifact(project, "package-lock", packageLock);
+                projectHelper.attachArtifact(project, packageManager.lockFileArtifactType(), packageLock);
             }
 
         } catch (IOException e) {
 
             throw new MojoFailureException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Copies the bundled dependencies - including their transitive dependencies - into the distribution directory
+     * and adds them to the dependencies of the distributed {@code package.json}. Since npm 7 bundled dependencies
+     * that are not listed as dependencies are not packed.
+     */
+    private void bundleDependencies() throws IOException {
+
+        final List<String> bundledDependencies = allDependencies()
+                .filter(it -> it.getType() == DependencyType.BUNDLED)
+                .map(NpmDependency::getName)
+                .collect(Collectors.toList());
+
+        if (bundledDependencies.isEmpty()) {
+
+            return;
+        }
+
+        Map<String, String> versions = BundledDependencies.copy(workingDirectory, bundledDependencies, distributionDirectory);
+
+        final ObjectMapper mapper = NpmDependencyMetaDataReader.makeObjectMapper();
+        final File packageJson = new File(distributionDirectory, PACKAGE_FILE_NAME);
+        final Package deployPackage = mapper.readValue(packageJson, Package.class);
+
+        Map<String, String> dependencies = new LinkedHashMap<>();
+
+        if (deployPackage.getDependencies() != null) {
+
+            dependencies.putAll(deployPackage.getDependencies());
+        }
+
+        dependencies.putAll(versions);
+
+        mapper.writeValue(packageJson, deployPackage.setDependencies(dependencies));
     }
 
 }

@@ -29,6 +29,12 @@
                             <version>file:/${project.parent.basedir}/implementation/target/dist/eitco-implementation-${project.version}.tgz</version>
                             <type>BUNDLED</type>
                         </dependency>
+                        <!-- is-odd depends on is-number, which needs to be bundled as well -->
+                        <dependency>
+                            <name>is-odd</name>
+                            <version>3.0.1</version>
+                            <type>BUNDLED</type>
+                        </dependency>
                     </dependencies>
                 </configuration>
             </plugin>
