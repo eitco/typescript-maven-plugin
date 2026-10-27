@@ -1,5 +1,17 @@
 <?xml version="1.0"?>
 <settings>
+	<servers>
+		<!-- credentials for the fake npm registry of the deploy integration test -->
+		<server>
+			<id>fake-registry-basic</id>
+			<username>deployer</username>
+			<password>s3cr3t-password</password>
+		</server>
+		<server>
+			<id>fake-registry-token</id>
+			<password>s3cr3t-token</password>
+		</server>
+	</servers>
 	<profiles>
 		<profile>
 			<id>it-repo</id>
