@@ -1,0 +1,55 @@
+name: build on windows and macos
+on:
+  push: { }
+  pull_request: { }
+
+jobs:
+  build:
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: set up jdk
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+          cache: maven
+          server-id: github
+          server-username: SERVER_USER
+          server-password: SERVER_PASSWORD
+      - name: build and test
+        shell: bash
+        run: |
+          mvn --batch-mode verify -e 2>&1 | tee build-output.log
+          exit ${PIPESTATUS[0]}
+        env:
+          SERVER_USER: ${{ secrets.DEPLOY_USER_GITHUB_PACKAGES }}
+          SERVER_PASSWORD: ${{ secrets.DEPLOY_TOKEN_GITHUB_PACKAGES }}
+      - name: report failures as annotations
+        if: failure()
+        shell: bash
+        run: |
+          # annotations are readable without authentication, in contrast to job logs
+          annotate() {
+            echo "::error title=$1::$(tail -n 60 "$2" | sed -e ':a' -e 'N' -e '$!ba' -e 's/%/%25/g' -e 's/\r/%0D/g' -e 's/\n/%0A/g')"
+          }
+          for report in target/invoker-reports/BUILD-*.xml; do
+            [ -f "$report" ] || continue
+            grep -q 'result="success"' "$report" && continue
+            name=$(basename "$report" .xml)
+            name=${name#BUILD-}
+            annotate "integration test $name failed" "target/it/$name/build.log"
+          done
+          annotate "maven output" build-output.log
+      - name: upload integration test logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: it-logs-${{ matrix.os }}
+          path: target/it/**/build.log
