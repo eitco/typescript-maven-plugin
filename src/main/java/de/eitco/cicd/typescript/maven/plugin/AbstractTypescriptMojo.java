@@ -222,9 +222,46 @@ public abstract class AbstractTypescriptMojo extends AbstractFrontendMojo {
     @Parameter(property = "typescript.tag", defaultValue = "latest")
     private String tag;
 
+    /**
+     * This parameter specifies the package manager used to install dependencies, run scripts, pack and publish
+     * the package. Possible values are {@code NPM} and {@code PNPM}. The goal {@code install-node-and-package-manager}
+     * installs the package manager chosen. pnpm 10.17 or later is required, its version is configured by the parameter
+     * {@code pnpmVersion} of the frontend-maven-plugin.
+     */
+    @Parameter(property = "typescript.package.manager", defaultValue = "NPM")
+    protected PackageManager packageManager;
+
+    /**
+     * This parameter specifies the dependencies that are allowed to execute scripts (like {@code postinstall}) when
+     * installed. pnpm executes no dependency scripts that are not listed here. pnpm 11 even fails the installation
+     * if a dependency not listed here has scripts. The list is written to {@code pnpm-workspace.yaml} as
+     * {@code allowBuilds} (pnpm 11) and {@code onlyBuiltDependencies} (pnpm 10). Only supported by pnpm.
+     */
+    @Parameter
+    protected List<String> allowBuilds = new ArrayList<>();
+
+    /**
+     * This parameter specifies the minimum age in minutes a version of a dependency must have been published before
+     * pnpm will install it. Younger versions are neither resolved nor downloaded. If left empty, pnpm's default is
+     * used, which is {@code 0} for pnpm 10 and {@code 1440} (one day) for pnpm 11. Only supported by pnpm.
+     */
+    @Parameter(property = "typescript.pnpm.minimumReleaseAge")
+    protected Integer minimumReleaseAge;
+
+    /**
+     * This parameter specifies dependencies that are exempt from {@code minimumReleaseAge}. Patterns like
+     * {@code @eitco/*} are supported. Only supported by pnpm.
+     */
+    @Parameter
+    protected List<String> minimumReleaseAgeExclude = new ArrayList<>();
+
     @Override
     protected boolean skipExecution() {
         return skip;
+    }
+
+    protected PnpmWorkspace makePnpmWorkspace() {
+        return new PnpmWorkspace(allowBuilds, minimumReleaseAge, minimumReleaseAgeExclude);
     }
 
     @NotNull

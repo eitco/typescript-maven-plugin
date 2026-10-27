@@ -50,7 +50,10 @@ class NpmRegistryCredentialsTest {
         Map<String, String> environment = NpmRegistryCredentials.toEnvironment(
                 "https://registry.npmjs.org/", null, "npm_secretToken");
 
-        assertEquals(Map.of("npm_config_//registry.npmjs.org/:_authToken", "npm_secretToken"), environment);
+        assertEquals(Map.of(
+                "npm_config_//registry.npmjs.org/:_authToken", "npm_secretToken",
+                "pnpm_config_//registry.npmjs.org/:_authToken", "npm_secretToken"
+        ), environment);
     }
 
     @Test
@@ -61,7 +64,10 @@ class NpmRegistryCredentialsTest {
 
         String expected = Base64.getEncoder().encodeToString("deployer:s3cr:t".getBytes(StandardCharsets.UTF_8));
 
-        assertEquals(Map.of("npm_config_//nexus.example.com/repository/npm-private/:_auth", expected), environment);
+        assertEquals(Map.of(
+                "npm_config_//nexus.example.com/repository/npm-private/:_auth", expected,
+                "pnpm_config_//nexus.example.com/repository/npm-private/:_auth", expected
+        ), environment);
     }
 
     @Test

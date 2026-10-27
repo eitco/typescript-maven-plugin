@@ -44,7 +44,7 @@ public abstract class AbstractNpmExecutionMojo extends AbstractTypescriptMojo {
             if (verbose) {
                 argumentsToUse+= " --verbose ";
             }
-            factory.getNpmRunner(new ProxyConfig(List.of()), getNpmRegistryURL()).execute(
+            packageManager.execute(factory, new ProxyConfig(List.of()), getNpmRegistryURL(),
                     argumentsToUse, makeEnvironment());
         } else {
             getLog().info("Skipping npm install as package.json unchanged");

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.eitco.build.essentials.test</groupId>
+    <artifactId>typescript-test-pnpm10-unlisted-build-scripts</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>npm</packaging>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>@frontend.maven.plugin.version@</version>
+                    <configuration>
+                        <nodeVersion>v22.13.0</nodeVersion>
+                        <pnpmVersion>10.17.0</pnpmVersion>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>typescript-maven-plugin</artifactId>
+                <version>@project.version@</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <packageManager>PNPM</packageManager>
+                    <typeScriptVersion>5.7.3</typeScriptVersion>
+                    <dependencies>
+                        <dependency>
+                            <name>esbuild</name>
+                            <version>0.25.0</version>
+                            <type>DEV</type>
+                        </dependency>
+                    </dependencies>
+                    <minimumReleaseAge>1440</minimumReleaseAge>
+                    <minimumReleaseAgeExclude>
+                        <minimumReleaseAgeExclude>@eitco/*</minimumReleaseAgeExclude>
+                    </minimumReleaseAgeExclude>
+                    <compileOptions>
+                        <declaration>true</declaration>
+                        <module>commonjs</module>
+                        <target>es2017</target>
+                        <moduleResolution>node</moduleResolution>
+                    </compileOptions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

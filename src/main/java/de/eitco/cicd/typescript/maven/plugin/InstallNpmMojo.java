@@ -31,13 +31,9 @@ public class InstallNpmMojo extends AbstractNpmExecutionMojo {
 
     @Override
     protected String getArguments() {
-        String ret = "install ";
-        if (force) {
-            ret += "--force ";
+        if (legacyPeerDeps && packageManager == PackageManager.PNPM) {
+            getLog().warn("ignoring legacyPeerDeps since it is not supported by pnpm");
         }
-        if (legacyPeerDeps) {
-            ret += "--legacy-peer-deps ";
-        }
-        return ret;
+        return packageManager.installArguments(force, legacyPeerDeps);
     }
 }

@@ -10,3 +10,7 @@ assert new File(baseDirectory, "target/dist/package.json").isFile()
 def tsconfig = new File(baseDirectory, "tsconfig.json").text
 assert tsconfig.contains("\"noUncheckedSideEffectImports\" : true") : tsconfig
 
+
+// pnpm only parameters are ignored with npm
+assert new File(baseDirectory, "build.log").text.contains("ignoring allowBuilds, minimumReleaseAge and minimumReleaseAgeExclude since they are only supported by pnpm")
+assert !new File(baseDirectory, "pnpm-workspace.yaml").exists()

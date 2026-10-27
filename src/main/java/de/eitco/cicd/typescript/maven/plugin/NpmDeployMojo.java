@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * This goal deploys the npm package by calling {@code npm publish}.
+ * This goal deploys the npm package by calling {@code npm publish} (or {@code pnpm publish}).
  */
 @Mojo(name = "deploy", threadSafe = true, defaultPhase = LifecyclePhase.INSTALL)
 public class NpmDeployMojo extends DistributionDirectoryNpmExecutionMojo {
@@ -35,7 +35,7 @@ public class NpmDeployMojo extends DistributionDirectoryNpmExecutionMojo {
      * authenticate {@code npm publish} against the registry the package is published to. If the server specifies a
      * username, basic authentication is used, otherwise its password is used as auth token. Encrypted passwords are
      * supported. The credentials are handed to npm as environment variables and are never written to an
-     * {@code .npmrc} file. This requires npm 7 or later. If left empty, npm's default authentication is used.
+     * {@code .npmrc} file. This requires npm 7 or later, or pnpm. If left empty, npm's default authentication is used.
      */
     @Parameter(property = "typescript.publish.server.id")
     private String publishServerId;
@@ -105,6 +105,6 @@ public class NpmDeployMojo extends DistributionDirectoryNpmExecutionMojo {
     }
 
     protected String getArguments() {
-        return "publish ";
+        return packageManager.publishArguments();
     }
 }

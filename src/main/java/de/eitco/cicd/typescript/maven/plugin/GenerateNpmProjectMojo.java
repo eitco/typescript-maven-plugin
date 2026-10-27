@@ -75,6 +75,8 @@ public class GenerateNpmProjectMojo extends AbstractTypescriptMojo {
             FileUtils.forceMkdir(distributionDirectory);
             mapper.writeValue(new File(distributionDirectory, PACKAGE_FILE_NAME), deployPackage);
 
+            writePnpmWorkspace();
+
             TsConfig tsConfig = TsConfig.mainConfig(compileOptions, sources);
             tsConfig.setExclude(sourceExcludes);
             tsConfig.setAngularCompilerOptions(angularCompilerOptions);
@@ -92,6 +94,32 @@ public class GenerateNpmProjectMojo extends AbstractTypescriptMojo {
             throw new MojoFailureException(e.getMessage(), e);
         }
 
+    }
+
+    private void writePnpmWorkspace() throws MojoFailureException, IOException {
+
+        final PnpmWorkspace workspace;
+
+        try {
+
+            workspace = makePnpmWorkspace();
+
+        } catch (IllegalArgumentException e) {
+
+            throw new MojoFailureException(e.getMessage(), e);
+        }
+
+        if (packageManager != PackageManager.PNPM) {
+
+            if (!workspace.isEmpty()) {
+
+                getLog().warn("ignoring allowBuilds, minimumReleaseAge and minimumReleaseAgeExclude since they are only supported by pnpm");
+            }
+
+            return;
+        }
+
+        workspace.write(new File(workingDirectory, PnpmWorkspace.FILE_NAME));
     }
 
 }

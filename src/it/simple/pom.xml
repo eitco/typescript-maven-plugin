@@ -30,6 +30,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <typeScriptVersion>5.7.3</typeScriptVersion>
+                    <!-- only supported by pnpm - must be ignored with a warning -->
+                    <allowBuilds>
+                        <allowBuild>esbuild</allowBuild>
+                    </allowBuilds>
                     <compileOptions>
                         <declaration>true</declaration>
                         <module>commonjs</module>

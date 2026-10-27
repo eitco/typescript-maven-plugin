@@ -18,11 +18,13 @@ import java.util.Map;
  * Translates registry credentials into npm configuration given as environment variables. npm (since version 7)
  * reads every environment variable prefixed with {@code npm_config_} as configuration entry and does not normalize
  * registry scoped keys starting with {@code //}. This way credentials can be handed to npm without writing them to
- * an {@code .npmrc} file.
+ * an {@code .npmrc} file. pnpm 10 reads the same variables, pnpm 11 reads variables prefixed with {@code pnpm_config_}
+ * - so every entry is given with both prefixes.
  */
 public final class NpmRegistryCredentials {
 
     private static final String NPM_CONFIG_PREFIX = "npm_config_";
+    private static final String PNPM_CONFIG_PREFIX = "pnpm_config_";
 
     private NpmRegistryCredentials() {
     }
@@ -60,15 +62,20 @@ public final class NpmRegistryCredentials {
             throw new IllegalArgumentException("no password or token given for registry " + registryUrl);
         }
 
-        String key = NPM_CONFIG_PREFIX + nerfDart(registryUrl);
+        String key = nerfDart(registryUrl);
 
         if (Strings.isNullOrEmpty(username)) {
 
-            return Map.of(key + ":_authToken", password);
+            return withBothPrefixes(key + ":_authToken", password);
         }
 
         String auth = Base64.getEncoder().encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8));
 
-        return Map.of(key + ":_auth", auth);
+        return withBothPrefixes(key + ":_auth", auth);
+    }
+
+    private static Map<String, String> withBothPrefixes(String key, String value) {
+
+        return Map.of(NPM_CONFIG_PREFIX + key, value, PNPM_CONFIG_PREFIX + key, value);
     }
 }

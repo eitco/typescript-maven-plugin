@@ -62,8 +62,16 @@ needed in a package, omitting build specific information.
 
 ## generate-sources
 
-In this phase first the `install-node-and-npm` goal from the [frontend maven plugin](https://github.com/eirslett/frontend-maven-plugin) is called.
-This will install node and npm in the configured versions. No need to install it by yourself.
+In this phase first the `install-node-and-package-manager` goal is called. It executes the goal `install-node-and-npm` 
+(or `install-node-and-pnpm` if `packageManager` is `PNPM`) of the [frontend maven plugin](https://github.com/eirslett/frontend-maven-plugin), 
+using the configuration of the frontend maven plugin given in the pom. This will install node and npm in the configured 
+versions. No need to install it by yourself. If the pom does not specify a version of the frontend maven plugin, the 
+version this plugin depends on is used.
+
+> 📘 Up to version 5.0.2 the goal `install-node-and-npm` of the frontend maven plugin was bound directly with the execution 
+> id `default-install-node-and-npm`. Only the plugin level configuration of the frontend maven plugin is used now - if you 
+> configured the execution `default-install-node-and-npm`, move its configuration to the plugin level.
+
 After that this plugins `npm-install` goal is called which basically executes `npm install` 
 
 > 📘 Maven users, note that `npm install` is not like `mvn install`. It simply installs the projects dependencies, not 
@@ -94,8 +102,8 @@ those files will be stored in the local maven repository.
 
 In this phase the `deploy` goal is called. This first simply calls `npm publish`, publishing the 
 package built to the configured npm registry. After that mavens default `deploy` goal is called,
-deploying the package created, the `package.json` file and the `package-lock.json` file to the 
-configured maven remote repository.
+deploying the package created, the `package.json` file and the `package-lock.json` file (or 
+`pnpm-lock.yaml` when using pnpm) to the configured maven remote repository.
 
 ### authentication
 
@@ -127,7 +135,8 @@ credentials can be taken from a server in the maven `settings.xml` - encrypted p
 
 If the server specifies a username, basic authentication is used, otherwise its password is used as 
 auth token. The credentials are handed to npm as environment variables (registry scoped `npm_config_` 
-variables) and are never written to an `.npmrc` file. This requires npm 7 or later.
+variables) and are never written to an `.npmrc` file. This requires npm 7 or later. The same works for pnpm,
+the variables are additionally given with the prefix `pnpm_config_`, which pnpm 11 reads.
 
 # specifying dependencies
 
@@ -168,7 +177,8 @@ third party dependencies. An npm dependency can be specified in the pom as follo
 the delivery artifact as configured by this value:
 
 * `DEV`-dependencies will not be added to the delivery artifact as they are only needed at compile time
-* `BUNDLED`-dependencies will be added to the delivery artifact
+* `BUNDLED`-dependencies will be added to the delivery artifact - including their transitive dependencies. They are 
+  listed as `dependencies` and `bundledDependencies` in the `package.json` file delivered, with the version installed.
 * `PEER`-dependencies will not be added to the delivery artifact, however the `package.json` file delivered will contain a reference to such a dependency.
 
 So, in order to add `@types/node` in verion `18.11.9` as a `DEV` dependency to your project, add the following into your pom:
@@ -259,6 +269,89 @@ To configure the npm and/or node version, you need to configure the `frontend-ma
 ...
 ```
 
+## pnpm
+
+Instead of npm, [pnpm](https://pnpm.io) can be used to install dependencies, run scripts, pack and publish the
+package. pnpm 10 (10.17 or later), pnpm 11 and pnpm 12 are supported. Note that pnpm 11 and 12 require node 22.13 or 
+later. pnpm 10.16 accepts `minimumReleaseAge`, but does not enforce it reliably. pnpm 12 downloads its native binary 
+from the npm registry the first time it is executed - this download does not use maven's proxy or mirror settings.
+
+To use pnpm, set the parameter `packageManager` to `PNPM` and configure the pnpm version at the
+`frontend-maven-plugin`:
+```xml
+...
+<build>
+    <pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <configuration>
+                    <nodeVersion>v22.13.0</nodeVersion>
+                    <pnpmVersion>11.28.8</pnpmVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </pluginManagement>
+    <plugins>
+        <plugin>
+            <groupId>de.eitco.cicd</groupId>
+            <artifactId>typescript-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+                <packageManager>PNPM</packageManager>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+...
+```
+
+The goal `install-node-and-package-manager` then installs node and pnpm instead of node and npm.
+
+The parameter `legacyPeerDeps` is not supported by pnpm and ignored. Publishing with pnpm skips pnpm's git checks
+(`--no-git-checks`), since the package is published from the `target/dist` directory of a working copy.
+
+### dependency scripts
+
+pnpm does not execute scripts (like `postinstall`) of dependencies unless they are explicitly allowed. pnpm 10 only
+warns about ignored scripts, pnpm 11 fails the installation. The dependencies allowed to execute scripts are listed
+with the parameter `allowBuilds`:
+```xml
+<configuration>
+    <packageManager>PNPM</packageManager>
+    <allowBuilds>
+        <allowBuild>esbuild</allowBuild>
+    </allowBuilds>
+</configuration>
+```
+
+### minimum release age
+
+pnpm can refuse to resolve - and thus download - versions of dependencies that were published recently. This
+protects against compromised versions that are usually detected and removed within hours. The parameter
+`minimumReleaseAge` specifies the minimum age in minutes, `minimumReleaseAgeExclude` lists dependencies exempt from
+this rule:
+```xml
+<configuration>
+    <packageManager>PNPM</packageManager>
+    <!-- one day -->
+    <minimumReleaseAge>1440</minimumReleaseAge>
+    <minimumReleaseAgeExclude>
+        <minimumReleaseAgeExclude>@eitco/*</minimumReleaseAgeExclude>
+    </minimumReleaseAgeExclude>
+</configuration>
+```
+
+If `minimumReleaseAge` is left empty, pnpm's default is used: pnpm 10 does not check the release age, pnpm 11 requires
+one day. Set it to `0` to disable the check with pnpm 11.
+
+### pnpm-workspace.yaml
+
+The goal `generate-project` writes the settings above to the file `pnpm-workspace.yaml`. The build allow list is
+written as `allowBuilds` (read by pnpm 11) and `onlyBuiltDependencies` (read by pnpm 10). The keys `allowBuilds`,
+`onlyBuiltDependencies`, `minimumReleaseAge` and `minimumReleaseAgeExclude` are managed by the plugin - any other
+setting in an existing `pnpm-workspace.yaml` is kept.
 
 ## typescript source file locations
 
